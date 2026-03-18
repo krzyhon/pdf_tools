@@ -120,7 +120,7 @@ def split_pdf_ranges(
         name = names[idx] if names else f"part_{idx + 1:02d}"
         out_path = out_dir / f"{name}.pdf"
         writer = PdfWriter()
-        writer.append(reader, pages=range(start - 1, end))  # convert to 0-based
+        writer.append(reader, pages=list(range(start - 1, end)))  # convert to 0-based
         writer.write(str(out_path))
         writer.close()
         created.append(str(out_path))
