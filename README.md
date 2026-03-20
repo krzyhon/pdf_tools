@@ -8,7 +8,7 @@ A collection of command-line Python utilities for common PDF operations.
 pip install -r requirements.txt
 ```
 
-Dependencies: `pypdf`, `pymupdf`, `tqdm`, `cryptography`
+Dependencies: `pypdf`, `pymupdf`, `tqdm`, `cryptography`, `pdf2docx`
 
 ---
 
@@ -201,6 +201,27 @@ python pdf_splitter.py input.pdf output_dir/ --ranges 1-3 4-6
 | `input` | Source PDF |
 | `output_dir` | Directory for output files (created if needed) |
 | `--ranges START-END ...` | Page ranges to extract, 1-based inclusive |
+
+---
+
+### pdf_to_docx.py — Convert PDF to Word document
+
+Converts a PDF to a `.docx` file. Text, images, and simple tables are handled well. Complex layouts (multi-column, overlapping elements) may not be reproduced exactly since PDF is fixed-layout and DOCX is flow-based.
+
+```bash
+# Convert entire document
+python pdf_to_docx.py input.pdf output.docx
+
+# Convert only pages 2 to 4
+python pdf_to_docx.py input.pdf output.docx --start 2 --end 4
+```
+
+| Argument | Description |
+|---|---|
+| `input` | Source PDF |
+| `output` | Output .docx file |
+| `--start N` | First page to convert, 1-based (default: 1) |
+| `--end N` | Last page to convert, 1-based inclusive (default: last page) |
 
 ---
 
