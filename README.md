@@ -225,6 +225,45 @@ python pdf_to_docx.py input.pdf output.docx --start 2 --end 4
 
 ---
 
+### pdf_to_images.py — Convert pages to images
+
+Renders each PDF page as a PNG or JPEG file. Output files are named `page_001.png`, `page_002.png`, etc.
+
+```bash
+# All pages as PNG at 150 DPI → output_dir/page_001.png, ...
+python pdf_to_images.py input.pdf output_dir/
+
+# Pages 1 and 3 as JPEG at 200 DPI
+python pdf_to_images.py input.pdf output_dir/ --format jpeg --dpi 200 --pages 1 3
+```
+
+| Argument | Description |
+|---|---|
+| `input` | Source PDF |
+| `output_dir` | Directory for output images (created if needed) |
+| `--format png\|jpeg` | Image format (default: png) |
+| `--dpi DPI` | Resolution in dots per inch (default: 150) |
+| `--pages N ...` | 1-based page numbers to export (default: all) |
+
+---
+
+### pdf_from_images.py — Create PDF from images
+
+Combines image files (PNG, JPEG, BMP, TIFF, WebP, etc.) into a single PDF. Each image becomes one page sized to match the image dimensions.
+
+```bash
+python pdf_from_images.py output.pdf image1.png image2.jpg image3.png
+```
+
+| Argument | Description |
+|---|---|
+| `output` | Output PDF file |
+| `images` | Image files to include, in order |
+
+> Tip: use `pdf_to_images.py` and `pdf_from_images.py` together to edit individual pages as images and reassemble them.
+
+---
+
 ### pdf_watermark.py — Stamp text watermark
 
 Adds a semi-transparent text watermark to every page.
