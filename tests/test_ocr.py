@@ -124,3 +124,9 @@ def test_invalid_dpi_raises(tmp_path, out):
     img_path = _make_image(tmp_path)
     with pytest.raises(ValueError, match="DPI"):
         ocr_to_pdf(img_path, out, dpi=0)
+
+
+def test_dpi_too_high_raises(tmp_path, out):
+    img_path = _make_image(tmp_path)
+    with pytest.raises(ValueError, match="DPI"):
+        ocr_to_pdf(img_path, out, dpi=601)

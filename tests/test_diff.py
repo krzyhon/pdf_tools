@@ -155,6 +155,11 @@ def test_visual_invalid_dpi_raises(pdf_a, pdf_b_changed, out):
         diff_visual(pdf_a, pdf_b_changed, out, dpi=0)
 
 
+def test_visual_dpi_too_high_raises(pdf_a, pdf_b_changed, out):
+    with pytest.raises(ValueError, match="DPI"):
+        diff_visual(pdf_a, pdf_b_changed, out, dpi=601)
+
+
 def test_visual_missing_file_raises(pdf_a, out):
     with pytest.raises(FileNotFoundError):
         diff_visual("nonexistent.pdf", pdf_a, out)
