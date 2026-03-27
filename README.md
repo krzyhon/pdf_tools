@@ -4,15 +4,53 @@ A collection of command-line Python utilities for common PDF operations.
 
 ## Requirements
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Dependencies: `pypdf`, `pymupdf`, `tqdm`, `cryptography`, `pdf2docx`
+Python dependencies: `pypdf`, `pymupdf`, `tqdm`, `cryptography`, `pdf2docx`, `pytesseract`, `Pillow`
+
+**System dependency for OCR only:** [Tesseract](https://github.com/tesseract-ocr/tesseract)
+
+```bash
+# macOS
+brew install tesseract
+
+# Ubuntu / Debian
+sudo apt install tesseract-ocr
+
+# Windows
+winget install UB-Mannheim.TesseractOCR
+```
 
 ---
 
 ## Tools
+
+### pdf_bookmarks.py — Manage bookmarks (table of contents)
+
+List, add, or remove PDF bookmarks (also called the document outline or table of contents). Bookmark levels are 1-based (1 = top-level chapter, 2 = sub-section, etc.).
+
+```bash
+# List all bookmarks
+python pdf_bookmarks.py list input.pdf
+
+# Add bookmarks (format: LEVEL:TITLE:PAGE)
+python pdf_bookmarks.py add input.pdf output.pdf "1:Introduction:1" "2:Overview:2" "1:Chapter 1:3"
+
+# Remove all bookmarks
+python pdf_bookmarks.py remove input.pdf output.pdf
+```
+
+| Subcommand | Arguments | Description |
+|---|---|---|
+| `list` | `input` | Print all bookmarks with level and page |
+| `add` | `input` `output` `BOOKMARK...` | Append bookmarks; format `LEVEL:TITLE:PAGE` |
+| `remove` | `input` `output` | Strip all bookmarks from the document |
+
+> Note: bookmark visibility depends on the PDF viewer. Chrome and Firefox show them reliably; macOS Preview may not display them.
+
+---
 
 ### pdf_compressor.py — Reduce file size
 
@@ -53,6 +91,36 @@ python pdf_decryptor.py locked.pdf unlocked.pdf
 
 ---
 
+### pdf_diff.py — Compare two PDFs
+
+Compares two PDF files and reports text-level and visual differences. The text report lists changed, added, and removed pages. The visual output is a side-by-side PDF with word-level red/green highlights.
+
+```bash
+# Print text diff report only
+python pdf_diff.py v1.pdf v2.pdf
+
+# Also produce a visual diff PDF
+python pdf_diff.py v1.pdf v2.pdf --output diff.pdf
+
+# Lower DPI for faster comparison (default: 150)
+python pdf_diff.py v1.pdf v2.pdf --output diff.pdf --dpi 100
+```
+
+| Argument | Description |
+|---|---|
+| `pdf_a` | First (original) PDF |
+| `pdf_b` | Second (modified) PDF |
+| `--output FILE` | Write a visual diff PDF (optional) |
+| `--dpi N` | Render resolution for pixel comparison, 1–600 (default: 150) |
+
+The text report contains:
+- `changed_pages` — pages whose text differs (with unified diff)
+- `added_pages` — pages present in B but not A (1-based)
+- `removed_pages` — pages present in A but not B (1-based)
+- `pages_a` / `pages_b` — total page counts
+
+---
+
 ### pdf_inspector.py — Find coordinates for redaction
 
 Two modes to help locate areas to redact:
@@ -90,6 +158,74 @@ python pdf_merger.py output.pdf file1.pdf file2.pdf file3.pdf
 |---|---|
 | `output` | Merged output PDF |
 | `inputs` | Two or more source PDFs (in order) |
+
+---
+
+### pdf_ocr.py — Make scanned PDFs searchable
+
+Converts a scanned PDF or image into a searchable PDF using Tesseract OCR. Each page is rendered to an image, OCR'd, and saved as a PDF with a hidden text layer — the result looks identical but is fully searchable and copy-pasteable.
+
+Requires Tesseract installed on the system (see [Requirements](#requirements)).
+
+```bash
+# Scanned PDF → searchable PDF
+python pdf_ocr.py scan.pdf searchable.pdf
+
+# Image → PDF
+python pdf_ocr.py scan.png searchable.pdf
+
+# Non-English document
+python pdf_ocr.py scan.pdf searchable.pdf --lang pol
+
+# Higher DPI for better accuracy
+python pdf_ocr.py scan.pdf searchable.pdf --dpi 400
+```
+
+| Argument | Description |
+|---|---|
+| `input` | Source file: scanned PDF or image (PNG, JPG, TIFF, BMP, WebP) |
+| `output` | Path for the searchable output PDF |
+| `--lang CODE` | Tesseract language code (default: `eng`). Examples: `pol`, `deu`, `fra`. Combine with `+`: `eng+pol` |
+| `--dpi N` | Render resolution for PDF pages, 1–600 (default: 300). Higher = better accuracy, slower |
+
+For additional language packs:
+```bash
+# macOS
+brew install tesseract-lang
+
+# Ubuntu / Debian
+sudo apt install tesseract-ocr-pol   # e.g. Polish
+```
+
+---
+
+### pdf_page_numbers.py — Stamp page numbers
+
+Adds page numbers to every page (or a selected subset). The format string supports `{n}` for the current page number and `{N}` for total pages.
+
+```bash
+# Default: "1", "2", … centred at the bottom
+python pdf_page_numbers.py input.pdf output.pdf
+
+# "Page 1 of 10" at the bottom-right
+python pdf_page_numbers.py input.pdf output.pdf --format "Page {n} of {N}" --position bottom-right
+
+# Start numbering from 5, larger font
+python pdf_page_numbers.py input.pdf output.pdf --start 5 --fontsize 12
+
+# Stamp only pages 1, 2, and 3
+python pdf_page_numbers.py input.pdf output.pdf --pages 1 2 3
+```
+
+| Argument | Description |
+|---|---|
+| `input` | Source PDF |
+| `output` | Output PDF with page numbers |
+| `--position POS` | Where to place numbers: `bottom-left`, `bottom-center` (default), `bottom-right`, `top-left`, `top-center`, `top-right` |
+| `--format STR` | Number format string (default: `{n}`). Use `{n}` = current page, `{N}` = total pages |
+| `--start N` | First page number to print (default: 1) |
+| `--fontsize PT` | Font size in points (default: 10) |
+| `--pages N ...` | 1-based page numbers to stamp (default: all) |
 
 ---
 
