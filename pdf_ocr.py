@@ -35,6 +35,7 @@ CLI usage:
 
 import argparse
 import sys
+import traceback
 from pathlib import Path
 
 import fitz  # PyMuPDF
@@ -84,8 +85,8 @@ def ocr_to_pdf(
             f"Unsupported format '{suffix}'. "
             f"Supported: {', '.join(sorted(_ALL_EXTENSIONS))}."
         )
-    if dpi < 1:
-        raise ValueError(f"DPI must be a positive integer, got {dpi}.")
+    if not 1 <= dpi <= 600:
+        raise ValueError(f"DPI must be between 1 and 600, got {dpi}.")
 
     # Collect PIL images to OCR
     images: list[Image.Image] = []
@@ -170,7 +171,8 @@ def main() -> None:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         sys.exit(1)
 
 

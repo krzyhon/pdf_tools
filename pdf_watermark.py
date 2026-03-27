@@ -17,6 +17,7 @@ CLI usage:
 
 import argparse
 import sys
+import traceback
 from pathlib import Path
 
 import fitz  # PyMuPDF
@@ -119,7 +120,8 @@ def main() -> None:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         sys.exit(1)
 
 

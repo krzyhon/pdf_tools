@@ -30,6 +30,7 @@ CLI usage:
 import argparse
 import difflib
 import sys
+import traceback
 from pathlib import Path
 
 import fitz  # PyMuPDF
@@ -202,8 +203,8 @@ def diff_visual(
     for path in (pdf_a, pdf_b):
         if not Path(path).exists():
             raise FileNotFoundError(f"File not found: {path}")
-    if dpi < 1:
-        raise ValueError(f"DPI must be a positive integer, got {dpi}.")
+    if not 1 <= dpi <= 600:
+        raise ValueError(f"DPI must be between 1 and 600, got {dpi}.")
 
     doc_a = fitz.open(pdf_a)
     doc_b = fitz.open(pdf_b)
@@ -404,7 +405,8 @@ def main() -> None:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         sys.exit(1)
 
 
