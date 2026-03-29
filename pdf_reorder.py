@@ -64,7 +64,11 @@ def reorder_pdf(
 
     writer = PdfWriter()
     try:
-        pages = tqdm(page_order, desc="Reordering", unit="page") if show_progress else page_order
+        pages = (
+            tqdm(page_order, desc="Reordering", unit="page")
+            if show_progress
+            else page_order
+        )
         for page_num in pages:
             writer.add_page(reader.pages[page_num - 1])  # convert to 0-based
         writer.write(output_path)

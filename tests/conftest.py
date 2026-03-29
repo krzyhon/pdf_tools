@@ -34,6 +34,7 @@ def multipage_pdf(tmp_path):
 def encrypted_pdf(tmp_path, simple_pdf):
     """Password-protected PDF (password: 'testpass')."""
     from pdf_protector import protect_pdf
+
     out = str(tmp_path / "encrypted.pdf")
     protect_pdf(simple_pdf, out, password="testpass")
     return out

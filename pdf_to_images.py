@@ -78,7 +78,11 @@ def pdf_to_images(
     mat = fitz.Matrix(zoom, zoom)
 
     output_paths = []
-    iterable = tqdm(page_indices, desc="Rendering", unit="page") if show_progress else page_indices
+    iterable = (
+        tqdm(page_indices, desc="Rendering", unit="page")
+        if show_progress
+        else page_indices
+    )
 
     for idx in iterable:
         page = doc[idx]
@@ -100,19 +104,35 @@ def main() -> None:
         ),
     )
     parser.add_argument("input", help="Source PDF file.")
-    parser.add_argument("output_dir", help="Directory for output images (created if needed).")
-    parser.add_argument("--format", dest="fmt", default="png", choices=["png", "jpeg"],
-                        help="Image format (default: png).")
-    parser.add_argument("--dpi", type=int, default=150,
-                        help="Resolution in DPI (default: 150).")
-    parser.add_argument("--pages", nargs="+", type=int, metavar="N",
-                        help="1-based page numbers to export. Omit to export all pages.")
+    parser.add_argument(
+        "output_dir", help="Directory for output images (created if needed)."
+    )
+    parser.add_argument(
+        "--format",
+        dest="fmt",
+        default="png",
+        choices=["png", "jpeg"],
+        help="Image format (default: png).",
+    )
+    parser.add_argument(
+        "--dpi", type=int, default=150, help="Resolution in DPI (default: 150)."
+    )
+    parser.add_argument(
+        "--pages",
+        nargs="+",
+        type=int,
+        metavar="N",
+        help="1-based page numbers to export. Omit to export all pages.",
+    )
     args = parser.parse_args()
 
     try:
         paths = pdf_to_images(
-            args.input, args.output_dir,
-            fmt=args.fmt, dpi=args.dpi, pages=args.pages,
+            args.input,
+            args.output_dir,
+            fmt=args.fmt,
+            dpi=args.dpi,
+            pages=args.pages,
             show_progress=True,
         )
         print(f"Exported {len(paths)} page(s) to '{args.output_dir}'.")

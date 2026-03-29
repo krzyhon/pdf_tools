@@ -77,20 +77,28 @@ def main() -> None:
             "       %(prog)s input.pdf output.docx --start 2 --end 4"
         ),
     )
-    parser.add_argument("input",  help="Source PDF file.")
+    parser.add_argument("input", help="Source PDF file.")
     parser.add_argument("output", help="Path for the output .docx file.")
     parser.add_argument(
-        "--start", type=int, default=1, metavar="N",
+        "--start",
+        type=int,
+        default=1,
+        metavar="N",
         help="First page to convert (1-based, default: 1).",
     )
     parser.add_argument(
-        "--end", type=int, default=None, metavar="N",
+        "--end",
+        type=int,
+        default=None,
+        metavar="N",
         help="Last page to convert (1-based, inclusive, default: last page).",
     )
     args = parser.parse_args()
 
     try:
-        convert_pdf_to_docx(args.input, args.output, start_page=args.start, end_page=args.end)
+        convert_pdf_to_docx(
+            args.input, args.output, start_page=args.start, end_page=args.end
+        )
         print(f"Converted '{args.input}' to '{args.output}'.")
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)

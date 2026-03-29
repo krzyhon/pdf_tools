@@ -70,6 +70,7 @@ def pdf_b_fewer_pages(tmp_path):
 
 # --- diff_report ---
 
+
 def test_report_no_differences(pdf_a, pdf_b_identical):
     report = diff_report(pdf_a, pdf_b_identical)
     assert report["changed_pages"] == []
@@ -114,6 +115,7 @@ def test_report_missing_b_raises(pdf_a):
 
 
 # --- diff_visual ---
+
 
 def test_visual_creates_output(pdf_a, pdf_b_changed, out):
     diff_visual(pdf_a, pdf_b_changed, out)

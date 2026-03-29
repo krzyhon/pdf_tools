@@ -25,7 +25,9 @@ from pypdf import PdfReader, PdfWriter
 from tqdm import tqdm
 
 
-def split_pdf_pages(input_path: str, output_dir: str, show_progress: bool = False) -> list[str]:
+def split_pdf_pages(
+    input_path: str, output_dir: str, show_progress: bool = False
+) -> list[str]:
     """Split every page of a PDF into a separate file.
 
     Args:
@@ -48,7 +50,11 @@ def split_pdf_pages(input_path: str, output_dir: str, show_progress: bool = Fals
 
     reader = PdfReader(input_path)
     created = []
-    pages = tqdm(reader.pages, desc="Splitting", unit="page") if show_progress else reader.pages
+    pages = (
+        tqdm(reader.pages, desc="Splitting", unit="page")
+        if show_progress
+        else reader.pages
+    )
     for i, page in enumerate(pages):
         out_path = out_dir / f"page_{i + 1:03d}.pdf"
         writer = PdfWriter()
@@ -115,7 +121,11 @@ def split_pdf_ranges(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     created = []
-    items = tqdm(enumerate(ranges), desc="Splitting", unit="range", total=len(ranges)) if show_progress else enumerate(ranges)
+    items = (
+        tqdm(enumerate(ranges), desc="Splitting", unit="range", total=len(ranges))
+        if show_progress
+        else enumerate(ranges)
+    )
     for idx, (start, end) in items:
         name = names[idx] if names else f"part_{idx + 1:02d}"
         out_path = out_dir / f"{name}.pdf"
@@ -165,7 +175,9 @@ def main() -> None:
 
     try:
         if args.ranges:
-            paths = split_pdf_ranges(args.input, args.output_dir, args.ranges, show_progress=True)
+            paths = split_pdf_ranges(
+                args.input, args.output_dir, args.ranges, show_progress=True
+            )
         else:
             paths = split_pdf_pages(args.input, args.output_dir, show_progress=True)
 

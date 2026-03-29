@@ -14,6 +14,7 @@ def _text(pdf_path: str, page: int) -> str:
 
 # --- basic functionality ---
 
+
 def test_creates_output(multipage_pdf, out):
     add_page_numbers(multipage_pdf, out)
     assert Path(out).exists()
@@ -38,6 +39,7 @@ def test_default_format_is_number_only(simple_pdf, out):
 
 # --- format string ---
 
+
 def test_format_page_n_of_N(multipage_pdf, out):
     add_page_numbers(multipage_pdf, out, fmt="Page {n} of {N}")
     assert "Page 1 of 4" in _text(out, 1)
@@ -56,6 +58,7 @@ def test_invalid_format_raises(simple_pdf, out):
 
 # --- start number ---
 
+
 def test_start_offset(multipage_pdf, out):
     add_page_numbers(multipage_pdf, out, start=10)
     assert "10" in _text(out, 1)
@@ -69,10 +72,18 @@ def test_start_one_raises(simple_pdf, out):
 
 # --- position ---
 
-@pytest.mark.parametrize("position", [
-    "bottom-left", "bottom-center", "bottom-right",
-    "top-left",    "top-center",    "top-right",
-])
+
+@pytest.mark.parametrize(
+    "position",
+    [
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+        "top-left",
+        "top-center",
+        "top-right",
+    ],
+)
 def test_all_positions_work(simple_pdf, out, position):
     count = add_page_numbers(simple_pdf, out, position=position)
     assert count == 1
@@ -85,6 +96,7 @@ def test_invalid_position_raises(simple_pdf, out):
 
 
 # --- pages subset ---
+
 
 def test_specific_pages_only(multipage_pdf, out):
     count = add_page_numbers(multipage_pdf, out, pages=[1, 3])
@@ -108,6 +120,7 @@ def test_page_zero_raises(multipage_pdf, out):
 
 
 # --- other validation ---
+
 
 def test_invalid_fontsize_raises(simple_pdf, out):
     with pytest.raises(ValueError, match="Font size"):

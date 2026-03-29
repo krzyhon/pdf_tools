@@ -69,9 +69,9 @@ def compress_pdf(
 
     doc.save(
         output_path,
-        garbage=4,      # remove unused objects + deduplicate
-        deflate=True,   # compress all streams
-        clean=True,     # clean up content streams
+        garbage=4,  # remove unused objects + deduplicate
+        deflate=True,  # compress all streams
+        clean=True,  # clean up content streams
     )
     doc.close()
 
@@ -134,20 +134,27 @@ def main() -> None:
             "       %(prog)s input.pdf output.pdf --image-dpi 150"
         ),
     )
-    parser.add_argument("input",  help="Source PDF file.")
+    parser.add_argument("input", help="Source PDF file.")
     parser.add_argument("output", help="Path for the compressed output PDF.")
     parser.add_argument(
-        "--image-dpi", type=int, default=None, metavar="DPI",
+        "--image-dpi",
+        type=int,
+        default=None,
+        metavar="DPI",
         help="Downsample embedded images to this DPI (e.g. 150). "
-             "Omit for lossless-only compression.",
+        "Omit for lossless-only compression.",
     )
     args = parser.parse_args()
 
     try:
-        original, compressed = compress_pdf(args.input, args.output, image_dpi=args.image_dpi)
+        original, compressed = compress_pdf(
+            args.input, args.output, image_dpi=args.image_dpi
+        )
         saved = original - compressed
         pct = (saved / original * 100) if original else 0
-        mode = f"lossless" + (f" + images downsampled to {args.image_dpi} DPI" if args.image_dpi else "")
+        mode = "lossless" + (
+            f" + images downsampled to {args.image_dpi} DPI" if args.image_dpi else ""
+        )
         print(
             f"{_fmt_size(original)} → {_fmt_size(compressed)} "
             f"(saved {_fmt_size(saved)}, {pct:.1f}%)  [{mode}]\n"

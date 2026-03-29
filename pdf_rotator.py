@@ -71,8 +71,13 @@ def rotate_pdf(
     writer = PdfWriter()
     rotated = 0
 
-    page_iter = tqdm(enumerate(reader.pages, 1), desc="Rotating",
-                     unit="page", total=total_pages) if show_progress else enumerate(reader.pages, 1)
+    page_iter = (
+        tqdm(
+            enumerate(reader.pages, 1), desc="Rotating", unit="page", total=total_pages
+        )
+        if show_progress
+        else enumerate(reader.pages, 1)
+    )
 
     for page_num, page in page_iter:
         if pages_set is None or page_num in pages_set:
@@ -94,21 +99,34 @@ def main() -> None:
             "       %(prog)s input.pdf output.pdf ANGLE --pages 1 3 5"
         ),
     )
-    parser.add_argument("input",  help="Source PDF file.")
+    parser.add_argument("input", help="Source PDF file.")
     parser.add_argument("output", help="Path for the rotated output PDF.")
-    parser.add_argument("angle",  type=int, choices=[90, 180, 270],
-                        help="Clockwise rotation in degrees: 90, 180, or 270.")
-    parser.add_argument("--pages", nargs="+", type=int, metavar="N",
-                        help="1-based page numbers to rotate. Omit to rotate all pages.")
+    parser.add_argument(
+        "angle",
+        type=int,
+        choices=[90, 180, 270],
+        help="Clockwise rotation in degrees: 90, 180, or 270.",
+    )
+    parser.add_argument(
+        "--pages",
+        nargs="+",
+        type=int,
+        metavar="N",
+        help="1-based page numbers to rotate. Omit to rotate all pages.",
+    )
     args = parser.parse_args()
 
     try:
         rotated = rotate_pdf(
-            args.input, args.output, args.angle,
+            args.input,
+            args.output,
+            args.angle,
             pages=args.pages,
             show_progress=True,
         )
-        print(f"Rotated {rotated} page(s) by {args.angle}°. Written to '{args.output}'.")
+        print(
+            f"Rotated {rotated} page(s) by {args.angle}°. Written to '{args.output}'."
+        )
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

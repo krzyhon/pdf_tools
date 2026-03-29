@@ -17,7 +17,9 @@ from pypdf import PdfReader, PdfWriter
 from tqdm import tqdm
 
 
-def merge_pdfs(output_path: str, input_paths: list[str], show_progress: bool = False) -> int:
+def merge_pdfs(
+    output_path: str, input_paths: list[str], show_progress: bool = False
+) -> int:
     """Merge multiple PDF files into a single output file.
 
     Args:
@@ -41,7 +43,11 @@ def merge_pdfs(output_path: str, input_paths: list[str], show_progress: bool = F
 
     writer = PdfWriter()
     try:
-        files = tqdm(input_paths, desc="Merging", unit="file") if show_progress else input_paths
+        files = (
+            tqdm(input_paths, desc="Merging", unit="file")
+            if show_progress
+            else input_paths
+        )
         for path in files:
             writer.append(path)
         writer.write(output_path)
@@ -57,7 +63,9 @@ def main() -> None:
         usage="%(prog)s output.pdf file1.pdf file2.pdf [file3.pdf ...]",
     )
     parser.add_argument("output", help="Path for the merged output PDF.")
-    parser.add_argument("inputs", nargs="+", metavar="input", help="PDF files to merge (in order).")
+    parser.add_argument(
+        "inputs", nargs="+", metavar="input", help="PDF files to merge (in order)."
+    )
     args = parser.parse_args()
 
     if len(args.inputs) < 2:

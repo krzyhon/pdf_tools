@@ -44,9 +44,11 @@ from PIL import Image, ImageSequence
 from tqdm import tqdm
 
 
-_PDF_EXTENSIONS   = frozenset({".pdf"})
-_IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"})
-_ALL_EXTENSIONS   = _PDF_EXTENSIONS | _IMAGE_EXTENSIONS
+_PDF_EXTENSIONS = frozenset({".pdf"})
+_IMAGE_EXTENSIONS = frozenset(
+    {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
+)
+_ALL_EXTENSIONS = _PDF_EXTENSIONS | _IMAGE_EXTENSIONS
 
 
 def ocr_to_pdf(
@@ -94,10 +96,12 @@ def ocr_to_pdf(
     if suffix in _PDF_EXTENSIONS:
         doc = fitz.open(input_path)
         mat = fitz.Matrix(dpi / 72, dpi / 72)
-        pages_iter = doc if not show_progress else tqdm(doc, desc="Rendering", unit="page")
+        pages_iter = (
+            doc if not show_progress else tqdm(doc, desc="Rendering", unit="page")
+        )
         for page in pages_iter:
             pix = page.get_pixmap(matrix=mat)
-            images.append(Image.frombytes("RGB", [pix.width, pix.height], pix.samples))
+            images.append(Image.frombytes("RGB", (pix.width, pix.height), pix.samples))
         doc.close()
     else:
         img = Image.open(input_path)
@@ -108,11 +112,20 @@ def ocr_to_pdf(
     # Run OCR on each image and combine into a single output PDF
     try:
         out_doc = fitz.open()
-        ocr_iter = images if not show_progress else tqdm(
-            images, desc="OCR", unit="page", initial=0,
+        ocr_iter = (
+            images
+            if not show_progress
+            else tqdm(
+                images,
+                desc="OCR",
+                unit="page",
+                initial=0,
+            )
         )
-        for img in ocr_iter:
-            pdf_bytes = pytesseract.image_to_pdf_or_hocr(img, extension="pdf", lang=language)
+        for ocr_img in ocr_iter:
+            pdf_bytes = pytesseract.image_to_pdf_or_hocr(
+                ocr_img, extension="pdf", lang=language
+            )
             page_doc = fitz.open("pdf", pdf_bytes)
             out_doc.insert_pdf(page_doc)
             page_doc.close()
@@ -140,10 +153,13 @@ def main() -> None:
         description="Convert a scanned PDF or image to a searchable PDF using OCR.",
         usage="%(prog)s input output [--lang CODE] [--dpi N]",
     )
-    parser.add_argument("input",  help="Source file: scanned PDF or image (PNG, JPG, TIFF, …).")
+    parser.add_argument(
+        "input", help="Source file: scanned PDF or image (PNG, JPG, TIFF, …)."
+    )
     parser.add_argument("output", help="Path for the searchable output PDF.")
     parser.add_argument(
-        "--lang", "-l",
+        "--lang",
+        "-l",
         default="eng",
         metavar="CODE",
         help=(
@@ -153,7 +169,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--dpi",
-        type=int, default=300,
+        type=int,
+        default=300,
         metavar="N",
         help="Render resolution for PDF pages (default: 300). Higher = better quality, slower.",
     )
@@ -161,7 +178,8 @@ def main() -> None:
 
     try:
         count = ocr_to_pdf(
-            args.input, args.output,
+            args.input,
+            args.output,
             language=args.lang,
             dpi=args.dpi,
             show_progress=True,

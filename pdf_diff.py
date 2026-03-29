@@ -76,11 +76,14 @@ def diff_report(
         text_a = doc_a[i].get_text().splitlines(keepends=True)
         text_b = doc_b[i].get_text().splitlines(keepends=True)
         if text_a != text_b:
-            diff = "".join(difflib.unified_diff(
-                text_a, text_b,
-                fromfile=f"a/page {i + 1}",
-                tofile=f"b/page {i + 1}",
-            ))
+            diff = "".join(
+                difflib.unified_diff(
+                    text_a,
+                    text_b,
+                    fromfile=f"a/page {i + 1}",
+                    tofile=f"b/page {i + 1}",
+                )
+            )
             changed_pages.append({"page": i + 1, "diff": diff})
 
     doc_a.close()
@@ -137,36 +140,59 @@ def _insert_side_by_side(
     out_page.show_pdf_page(rect_b, doc_b, page_b_idx)
 
     # Dividing line
-    out_page.draw_line(fitz.Point(w_a + gap / 2, 0),
-                       fitz.Point(w_a + gap / 2, content_h),
-                       color=(0.7, 0.7, 0.7), width=1)
+    out_page.draw_line(
+        fitz.Point(w_a + gap / 2, 0),
+        fitz.Point(w_a + gap / 2, content_h),
+        color=(0.7, 0.7, 0.7),
+        width=1,
+    )
 
     if word_rects_a or word_rects_b:
         # Word-level highlights: red on A side, green on B side
-        for rect in (word_rects_a or []):
-            out_page.draw_rect(rect, color=None, fill=(1.0, 0.4, 0.4), fill_opacity=0.5, width=0)
-        for rect in (word_rects_b or []):
-            shifted = fitz.Rect(rect.x0 + w_a + gap, rect.y0,
-                                rect.x1 + w_a + gap, rect.y1)
-            out_page.draw_rect(shifted, color=None, fill=(0.3, 1.0, 0.3), fill_opacity=0.5, width=0)
+        for rect in word_rects_a or []:
+            out_page.draw_rect(
+                rect, color=None, fill=(1.0, 0.4, 0.4), fill_opacity=0.5, width=0
+            )
+        for rect in word_rects_b or []:
+            shifted = fitz.Rect(
+                rect.x0 + w_a + gap, rect.y0, rect.x1 + w_a + gap, rect.y1
+            )
+            out_page.draw_rect(
+                shifted, color=None, fill=(0.3, 1.0, 0.3), fill_opacity=0.5, width=0
+            )
     elif bands and pix_h > 0:
         # Fallback: yellow row bands for visual-only changes
         scale_a = h_a / pix_h
         scale_b = h_b / pix_h
         for r0, r1 in bands:
             y0_a, y1_a = r0 * scale_a, (r1 + 1) * scale_a
-            out_page.draw_rect(fitz.Rect(0, y0_a, w_a, y1_a),
-                               color=None, fill=(1.0, 0.9, 0.0), fill_opacity=0.4, width=0)
+            out_page.draw_rect(
+                fitz.Rect(0, y0_a, w_a, y1_a),
+                color=None,
+                fill=(1.0, 0.9, 0.0),
+                fill_opacity=0.4,
+                width=0,
+            )
             y0_b, y1_b = r0 * scale_b, (r1 + 1) * scale_b
-            out_page.draw_rect(fitz.Rect(w_a + gap, y0_b, total_w, y1_b),
-                               color=None, fill=(1.0, 0.9, 0.0), fill_opacity=0.4, width=0)
+            out_page.draw_rect(
+                fitz.Rect(w_a + gap, y0_b, total_w, y1_b),
+                color=None,
+                fill=(1.0, 0.9, 0.0),
+                fill_opacity=0.4,
+                width=0,
+            )
 
     # Labels
     label_y = content_h + label_h - 4
-    out_page.insert_text(fitz.Point(4, label_y), "A - original",
-                         fontsize=10, color=(0.6, 0.1, 0.1))
-    out_page.insert_text(fitz.Point(w_a + gap + 4, label_y), "B - modified",
-                         fontsize=10, color=(0.1, 0.5, 0.1))
+    out_page.insert_text(
+        fitz.Point(4, label_y), "A - original", fontsize=10, color=(0.6, 0.1, 0.1)
+    )
+    out_page.insert_text(
+        fitz.Point(w_a + gap + 4, label_y),
+        "B - modified",
+        fontsize=10,
+        color=(0.1, 0.5, 0.1),
+    )
 
 
 def diff_visual(
@@ -214,7 +240,7 @@ def diff_visual(
     n_b = doc_b.page_count
     n_common = min(n_a, n_b)
 
-    _ADDED   = (0.0, 0.7, 0.0)  # green - used for added-page border
+    _ADDED = (0.0, 0.7, 0.0)  # green - used for added-page border
     _REMOVED = (0.9, 0.1, 0.1)  # red   - used for removed-page placeholder
 
     changed_pages = []
@@ -224,8 +250,8 @@ def diff_visual(
     if show_progress:
         pages_iter = tqdm(pages_iter, desc="Comparing", unit="page")
 
-    _GAP    = 12   # points between the two half-pages
-    _LABEL  = 16   # points reserved at the bottom for labels
+    _GAP = 12  # points between the two half-pages
+    _LABEL = 16  # points reserved at the bottom for labels
 
     for i in pages_iter:
         page_a = doc_a[i]
@@ -291,26 +317,50 @@ def diff_visual(
 
         if rects_a or rects_b:
             # Text changed: use word-level red/green highlights
-            _insert_side_by_side(out_doc, doc_a, doc_b, i, i, _GAP, _LABEL,
-                                 word_rects_a=rects_a, word_rects_b=rects_b)
+            _insert_side_by_side(
+                out_doc,
+                doc_a,
+                doc_b,
+                i,
+                i,
+                _GAP,
+                _LABEL,
+                word_rects_a=rects_a,
+                word_rects_b=rects_b,
+            )
         else:
             # Visual-only change (e.g. image replaced): fall back to row bands
-            _insert_side_by_side(out_doc, doc_a, doc_b, i, i, _GAP, _LABEL,
-                                 bands=bands, pix_h=ph,
-                                 h_a=page_a.rect.height, h_b=page_b.rect.height)
+            _insert_side_by_side(
+                out_doc,
+                doc_a,
+                doc_b,
+                i,
+                i,
+                _GAP,
+                _LABEL,
+                bands=bands,
+                pix_h=ph,
+                h_a=page_a.rect.height,
+                h_b=page_b.rect.height,
+            )
 
         # Record the text diff (or note a visual-only change)
         text_a = page_a.get_text().splitlines(keepends=True)
         text_b = page_b.get_text().splitlines(keepends=True)
         if text_a != text_b:
-            diff = "".join(difflib.unified_diff(
-                text_a, text_b,
-                fromfile=f"a/page {i + 1}",
-                tofile=f"b/page {i + 1}",
-            ))
+            diff = "".join(
+                difflib.unified_diff(
+                    text_a,
+                    text_b,
+                    fromfile=f"a/page {i + 1}",
+                    tofile=f"b/page {i + 1}",
+                )
+            )
             changed_pages.append({"page": i + 1, "diff": diff})
         else:
-            changed_pages.append({"page": i + 1, "diff": "<visual change only - text is identical>"})
+            changed_pages.append(
+                {"page": i + 1, "diff": "<visual change only - text is identical>"}
+            )
 
     # Pages only in B (added)
     for i in range(n_common, n_b):
@@ -319,17 +369,23 @@ def diff_visual(
         r = out_page.rect
         inner = fitz.Rect(r.x0 + 5, r.y0 + 5, r.x1 - 5, r.y1 - 5)
         out_page.draw_rect(inner, color=_ADDED, width=6)
-        out_page.insert_text(fitz.Point(15, 25), f"[ADDED - page {i + 1}]",
-                             fontsize=12, color=_ADDED)
+        out_page.insert_text(
+            fitz.Point(15, 25), f"[ADDED - page {i + 1}]", fontsize=12, color=_ADDED
+        )
 
     # Pages only in A (removed) - insert a placeholder
     for i in range(n_common, n_a):
         page_a = doc_a[i]
         out_page = out_doc.new_page(width=page_a.rect.width, height=page_a.rect.height)
-        out_page.draw_rect(out_page.rect, color=_REMOVED, fill=_REMOVED, fill_opacity=0.12, width=4)
-        out_page.insert_text(fitz.Point(15, 25),
-                             f"[REMOVED - page {i + 1} of original]",
-                             fontsize=12, color=_REMOVED)
+        out_page.draw_rect(
+            out_page.rect, color=_REMOVED, fill=_REMOVED, fill_opacity=0.12, width=4
+        )
+        out_page.insert_text(
+            fitz.Point(15, 25),
+            f"[REMOVED - page {i + 1} of original]",
+            fontsize=12,
+            color=_REMOVED,
+        )
 
     out_doc.save(output_path, garbage=4, deflate=True)
     out_doc.close()
@@ -358,7 +414,11 @@ def _format_report(report: dict) -> str:
     if report["removed_pages"]:
         lines.append(f"Removed pages (in A only): {report['removed_pages']}")
 
-    if not report["changed_pages"] and not report["added_pages"] and not report["removed_pages"]:
+    if (
+        not report["changed_pages"]
+        and not report["added_pages"]
+        and not report["removed_pages"]
+    ):
         lines.append("No differences found.")
     elif report["changed_pages"]:
         lines.append(f"\nChanged pages ({len(report['changed_pages'])}):")
@@ -377,13 +437,15 @@ def main() -> None:
     parser.add_argument("pdf_a", help="Original PDF (version A).")
     parser.add_argument("pdf_b", help="Modified PDF (version B).")
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         metavar="FILE",
         help="Write a visual diff PDF to this path.",
     )
     parser.add_argument(
         "--dpi",
-        type=int, default=150,
+        type=int,
+        default=150,
         metavar="N",
         help="Render DPI for pixel comparison (default: 150). Lower is faster.",
     )
@@ -392,7 +454,9 @@ def main() -> None:
     try:
         if args.output:
             report = diff_visual(
-                args.pdf_a, args.pdf_b, args.output,
+                args.pdf_a,
+                args.pdf_b,
+                args.output,
                 dpi=args.dpi,
                 show_progress=True,
             )

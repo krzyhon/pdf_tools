@@ -26,9 +26,9 @@ def test_redact_text_multiple_terms(simple_pdf, out):
 
 
 def test_redact_combined(simple_pdf, out):
-    count = redact_areas(simple_pdf, out,
-                         areas=[(1, 40, 90, 300, 120)],
-                         terms=["Secret phrase"])
+    count = redact_areas(
+        simple_pdf, out, areas=[(1, 40, 90, 300, 120)], terms=["Secret phrase"]
+    )
     assert count >= 2
 
 
