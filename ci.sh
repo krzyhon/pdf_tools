@@ -28,7 +28,7 @@ run "ruff lint"          ruff check .
 run "ruff format"        ruff format --check .
 run "mypy"               mypy pdf_*.py --ignore-missing-imports
 run "pip-audit"          pip-audit -r requirements.txt
-run "pytest"             pytest tests/ -v
+run "pytest"             pytest tests/ -v --cov=. --cov-fail-under=80 --cov-report=term-missing
 
 echo
 echo "=== Results: $PASS passed, $FAIL failed ==="
