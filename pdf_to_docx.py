@@ -69,7 +69,7 @@ def convert_pdf_to_docx(
         cv.close()
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Convert a PDF file to a Word document (.docx).",
         usage=(

@@ -429,7 +429,7 @@ def _format_report(report: dict) -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Compare two PDFs and report or visualise differences.",
         usage="%(prog)s a.pdf b.pdf [--output diff.pdf] [--dpi N]",

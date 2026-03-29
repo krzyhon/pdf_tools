@@ -78,7 +78,7 @@ def reorder_pdf(
     return len(page_order)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Rearrange pages of a PDF into a new order.",
         usage="%(prog)s input.pdf output.pdf PAGE [PAGE ...]",

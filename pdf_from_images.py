@@ -83,7 +83,7 @@ def images_to_pdf(
     return pages
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Create a PDF from image files (PNG, JPEG, BMP, TIFF, etc.).",
         usage="%(prog)s output.pdf image1.png image2.jpg [image3.png ...]",

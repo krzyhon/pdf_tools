@@ -47,7 +47,7 @@ def protect_pdf(input_path: str, output_path: str, password: str) -> None:
         writer.close()
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Encrypt a PDF with a password (AES-256).",
         usage="%(prog)s input.pdf output.pdf [--password PASSWORD]",

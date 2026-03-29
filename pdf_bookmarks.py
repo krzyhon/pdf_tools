@@ -168,7 +168,7 @@ def _parse_bookmark(value: str) -> dict:
     return {"level": level, "title": title, "page": page}
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="List, add, or remove PDF bookmarks.",
         usage=(

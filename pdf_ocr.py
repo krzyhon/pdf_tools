@@ -148,7 +148,7 @@ def ocr_to_pdf(
     return len(images)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Convert a scanned PDF or image to a searchable PDF using OCR.",
         usage="%(prog)s input output [--lang CODE] [--dpi N]",

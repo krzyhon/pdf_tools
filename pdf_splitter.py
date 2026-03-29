@@ -154,7 +154,7 @@ def _parse_range(value: str) -> tuple[int, int]:
     return (start, end)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Split a PDF into multiple files.",
         usage=(

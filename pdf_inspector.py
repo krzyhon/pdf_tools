@@ -103,14 +103,14 @@ _RECT_COLOR = "red"
 _RECT_WIDTH = 2
 
 
-def _render_page_png(page: fitz.Page, zoom: float) -> bytes:
+def _render_page_png(page: fitz.Page, zoom: float) -> bytes:  # pragma: no cover
     """Render a page to PNG bytes at the given zoom level."""
     mat = fitz.Matrix(zoom, zoom)
     pix = page.get_pixmap(matrix=mat, alpha=False)
     return pix.tobytes("png")
 
 
-def view_page(input_path: str, page_num: int = 1) -> None:
+def view_page(input_path: str, page_num: int = 1) -> None:  # pragma: no cover
     """Open an interactive tkinter viewer for the given page."""
     import tkinter as tk
 
@@ -299,7 +299,7 @@ def view_page(input_path: str, page_num: int = 1) -> None:
 # ---------------------------------------------------------------------------
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Inspect a PDF to find rectangle coordinates for redaction.",
         formatter_class=argparse.RawDescriptionHelpFormatter,

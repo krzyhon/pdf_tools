@@ -162,7 +162,7 @@ def add_page_numbers(
     return len(target_pages)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Stamp page numbers onto PDF pages.",
         usage=(
