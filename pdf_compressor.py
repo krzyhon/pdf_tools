@@ -126,7 +126,7 @@ def _fmt_size(n: int) -> str:
     return f"{n} B"
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Reduce PDF file size via lossless compression and optional image downsampling.",
         usage=(

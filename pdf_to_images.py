@@ -95,7 +95,7 @@ def pdf_to_images(
     return output_paths
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Render PDF pages as PNG or JPEG image files.",
         usage=(

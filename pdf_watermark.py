@@ -87,7 +87,7 @@ def watermark_pdf(
     doc.close()
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Stamp a text watermark onto every page of a PDF.",
         usage="%(prog)s input.pdf output.pdf TEXT [options]",

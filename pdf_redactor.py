@@ -152,7 +152,7 @@ def _parse_area(value: str) -> tuple[int, float, float, float, float]:
     return (page, x0, y0, x1, y1)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Permanently redact content from a PDF.",
         usage=(

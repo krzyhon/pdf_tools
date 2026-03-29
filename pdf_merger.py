@@ -57,7 +57,7 @@ def merge_pdfs(
     return len(PdfReader(output_path).pages)
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Merge multiple PDF files into one.",
         usage="%(prog)s output.pdf file1.pdf file2.pdf [file3.pdf ...]",

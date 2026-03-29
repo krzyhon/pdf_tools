@@ -91,7 +91,7 @@ def rotate_pdf(
     return rotated
 
 
-def main() -> None:
+def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Rotate pages in a PDF.",
         usage=(
