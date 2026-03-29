@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+VENV_BIN="$(dirname "$0")/.venv/bin"
+export PATH="$VENV_BIN:$PATH"
+
 PASS=0
 FAIL=0
 
@@ -10,11 +13,11 @@ run() {
     printf "%-40s" "$name..."
     if "$@" > /dev/null 2>&1; then
         echo "OK"
-        ((PASS++))
+        PASS=$((PASS + 1))
     else
         echo "FAILED"
-        ((FAIL++))
-        "$@" 2>&1 | sed 's/^/  /'
+        FAIL=$((FAIL + 1))
+        "$@" 2>&1 | sed 's/^/  /' || true
     fi
 }
 
