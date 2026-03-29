@@ -25,17 +25,20 @@ def pdf_with_bookmarks(tmp_path):
     for i in range(1, 4):
         p = doc.new_page(width=595, height=842)
         p.insert_text((50, 100), f"Page {i}", fontsize=14)
-    doc.set_toc([
-        [1, "Chapter 1", 1],
-        [2, "Section 1.1", 2],
-        [1, "Chapter 2", 3],
-    ])
+    doc.set_toc(
+        [
+            [1, "Chapter 1", 1],
+            [2, "Section 1.1", 2],
+            [1, "Chapter 2", 3],
+        ]
+    )
     doc.save(str(path))
     doc.close()
     return str(path)
 
 
 # --- list_bookmarks ---
+
 
 def test_list_empty(pdf_no_bookmarks):
     assert list_bookmarks(pdf_no_bookmarks) == []
@@ -48,9 +51,9 @@ def test_list_returns_all(pdf_with_bookmarks):
 
 def test_list_structure(pdf_with_bookmarks):
     bms = list_bookmarks(pdf_with_bookmarks)
-    assert bms[0] == {"level": 1, "title": "Chapter 1",   "page": 1}
+    assert bms[0] == {"level": 1, "title": "Chapter 1", "page": 1}
     assert bms[1] == {"level": 2, "title": "Section 1.1", "page": 2}
-    assert bms[2] == {"level": 1, "title": "Chapter 2",   "page": 3}
+    assert bms[2] == {"level": 1, "title": "Chapter 2", "page": 3}
 
 
 def test_list_missing_file_raises():
@@ -60,6 +63,7 @@ def test_list_missing_file_raises():
 
 # --- add_bookmarks ---
 
+
 def test_add_creates_output(pdf_no_bookmarks, out):
     add_bookmarks(pdf_no_bookmarks, out, [{"level": 1, "title": "Intro", "page": 1}])
     assert Path(out).exists()
@@ -68,7 +72,7 @@ def test_add_creates_output(pdf_no_bookmarks, out):
 def test_add_bookmarks_appear(pdf_no_bookmarks, out):
     bookmarks = [
         {"level": 1, "title": "Chapter 1", "page": 1},
-        {"level": 2, "title": "Section",   "page": 2},
+        {"level": 2, "title": "Section", "page": 2},
     ]
     count = add_bookmarks(pdf_no_bookmarks, out, bookmarks)
     assert count == 2
@@ -79,7 +83,9 @@ def test_add_bookmarks_appear(pdf_no_bookmarks, out):
 
 
 def test_add_preserves_existing(pdf_with_bookmarks, out):
-    add_bookmarks(pdf_with_bookmarks, out, [{"level": 1, "title": "Appendix", "page": 3}])
+    add_bookmarks(
+        pdf_with_bookmarks, out, [{"level": 1, "title": "Appendix", "page": 3}]
+    )
     result = list_bookmarks(out)
     assert len(result) == 4  # 3 existing + 1 new
     assert result[-1]["title"] == "Appendix"
@@ -121,6 +127,7 @@ def test_add_missing_file_raises(out):
 
 
 # --- remove_bookmarks ---
+
 
 def test_remove_creates_output(pdf_with_bookmarks, out):
     remove_bookmarks(pdf_with_bookmarks, out)

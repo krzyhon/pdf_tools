@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 import fitz
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from pdf_ocr import ocr_to_pdf
 
 
@@ -26,6 +26,7 @@ def _make_scanned_pdf(tmp_path) -> str:
         draw.text((20, 30), word, fill="black")
 
         import io
+
         buf = io.BytesIO()
         img.save(buf, format="PNG")
         buf.seek(0)
@@ -39,6 +40,7 @@ def _make_scanned_pdf(tmp_path) -> str:
 
 
 # --- basic functionality ---
+
 
 def test_ocr_image_creates_output(tmp_path, out):
     img_path = _make_image(tmp_path)
@@ -86,6 +88,7 @@ def test_ocr_tiff_image(tmp_path, out):
 
 # --- PDF input ---
 
+
 def test_ocr_pdf_creates_output(tmp_path, out):
     pdf_path = _make_scanned_pdf(tmp_path)
     ocr_to_pdf(pdf_path, out)
@@ -107,6 +110,7 @@ def test_ocr_pdf_output_has_correct_pages(tmp_path, out):
 
 
 # --- validation ---
+
 
 def test_missing_file_raises(out):
     with pytest.raises(FileNotFoundError):

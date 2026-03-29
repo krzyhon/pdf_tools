@@ -66,8 +66,7 @@ def list_bookmarks(pdf_path: str) -> list[dict]:
     toc = doc.get_toc(simple=True)
     doc.close()
 
-    return [{"level": lvl, "title": title, "page": page}
-            for lvl, title, page in toc]
+    return [{"level": lvl, "title": title, "page": page} for lvl, title, page in toc]
 
 
 def add_bookmarks(
@@ -160,7 +159,7 @@ def _parse_bookmark(value: str) -> dict:
         )
     try:
         level = int(parts[0])
-        page  = int(parts[-1])
+        page = int(parts[-1])
     except ValueError:
         raise argparse.ArgumentTypeError(
             f"Invalid bookmark '{value}': LEVEL and PAGE must be integers."
@@ -174,7 +173,7 @@ def main() -> None:
         description="List, add, or remove PDF bookmarks.",
         usage=(
             "%(prog)s list   input.pdf\n"
-            "       %(prog)s add    input.pdf output.pdf \"LEVEL:TITLE:PAGE\" ...\n"
+            '       %(prog)s add    input.pdf output.pdf "LEVEL:TITLE:PAGE" ...\n'
             "       %(prog)s remove input.pdf output.pdf"
         ),
     )
@@ -187,20 +186,19 @@ def main() -> None:
 
     # add
     p_add = sub.add_parser("add", help="Add bookmarks to a PDF.")
-    p_add.add_argument("input",  help="Source PDF file.")
+    p_add.add_argument("input", help="Source PDF file.")
     p_add.add_argument("output", help="Path for the updated PDF.")
     p_add.add_argument(
         "bookmarks",
         nargs="+",
         metavar="LEVEL:TITLE:PAGE",
         type=_parse_bookmark,
-        help="Bookmark to add. LEVEL >= 1, PAGE is 1-based. "
-             "Example: \"1:Chapter 1:3\"",
+        help='Bookmark to add. LEVEL >= 1, PAGE is 1-based. Example: "1:Chapter 1:3"',
     )
 
     # remove
     p_remove = sub.add_parser("remove", help="Remove all bookmarks from a PDF.")
-    p_remove.add_argument("input",  help="Source PDF file.")
+    p_remove.add_argument("input", help="Source PDF file.")
     p_remove.add_argument("output", help="Path for the updated PDF.")
 
     args = parser.parse_args()

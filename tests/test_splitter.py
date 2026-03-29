@@ -47,7 +47,9 @@ def test_split_ranges_default_naming(multipage_pdf, tmp_path):
 
 def test_split_ranges_custom_names(multipage_pdf, tmp_path):
     out_dir = str(tmp_path / "ranges")
-    paths = split_pdf_ranges(multipage_pdf, out_dir, [(1, 2), (3, 4)], names=["first", "second"])
+    paths = split_pdf_ranges(
+        multipage_pdf, out_dir, [(1, 2), (3, 4)], names=["first", "second"]
+    )
     names = [Path(p).name for p in paths]
     assert "first.pdf" in names
     assert "second.pdf" in names

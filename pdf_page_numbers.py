@@ -36,10 +36,16 @@ import fitz  # PyMuPDF
 from tqdm import tqdm
 
 
-_VALID_POSITIONS = frozenset({
-    "bottom-left", "bottom-center", "bottom-right",
-    "top-left",    "top-center",    "top-right",
-})
+_VALID_POSITIONS = frozenset(
+    {
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+        "top-left",
+        "top-center",
+        "top-right",
+    }
+)
 
 _FONT_NAME = "helv"
 
@@ -165,10 +171,11 @@ def main() -> None:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("input",  help="Source PDF file.")
+    parser.add_argument("input", help="Source PDF file.")
     parser.add_argument("output", help="Path for the numbered output PDF.")
     parser.add_argument(
-        "--position", "-p",
+        "--position",
+        "-p",
         default="bottom-center",
         choices=sorted(_VALID_POSITIONS),
         metavar="POS",
@@ -179,33 +186,39 @@ def main() -> None:
         ),
     )
     parser.add_argument(
-        "--format", "-f",
+        "--format",
+        "-f",
         dest="fmt",
         default="{n}",
         metavar="STRING",
         help='Format string. Use {n} for page number, {N} for total. Default: "{n}".',
     )
     parser.add_argument(
-        "--start", "-s",
-        type=int, default=1,
+        "--start",
+        "-s",
+        type=int,
+        default=1,
         metavar="N",
         help="Number to assign to the first stamped page. Default: 1.",
     )
     parser.add_argument(
         "--fontsize",
-        type=float, default=10.0,
+        type=float,
+        default=10.0,
         metavar="PT",
         help="Font size in points. Default: 10.",
     )
     parser.add_argument(
         "--margin",
-        type=float, default=36.0,
+        type=float,
+        default=36.0,
         metavar="PT",
         help="Distance from the page edge in points (default: 36 = 0.5 inch).",
     )
     parser.add_argument(
         "--pages",
-        nargs="+", type=int,
+        nargs="+",
+        type=int,
         metavar="N",
         help="1-based page numbers to stamp. Omit to stamp all pages.",
     )
@@ -213,7 +226,8 @@ def main() -> None:
 
     try:
         count = add_page_numbers(
-            args.input, args.output,
+            args.input,
+            args.output,
             position=args.position,
             fmt=args.fmt,
             start=args.start,

@@ -92,23 +92,45 @@ def main() -> None:
         description="Stamp a text watermark onto every page of a PDF.",
         usage="%(prog)s input.pdf output.pdf TEXT [options]",
     )
-    parser.add_argument("input",  help="Source PDF file.")
+    parser.add_argument("input", help="Source PDF file.")
     parser.add_argument("output", help="Path for the watermarked output PDF.")
-    parser.add_argument("text",   help='Watermark text, e.g. "DRAFT".')
-    parser.add_argument("--fontsize", type=float, default=60.0,
-                        metavar="PT", help="Font size in points (default: 60).")
-    parser.add_argument("--opacity", type=float, default=0.15,
-                        metavar="N", help="Opacity 0.0–1.0 (default: 0.15).")
-    parser.add_argument("--angle", type=float, default=45.0,
-                        metavar="DEG", help="Rotation in degrees, counter-clockwise (default: 45).")
-    parser.add_argument("--color", nargs=3, type=float, default=[0.5, 0.5, 0.5],
-                        metavar=("R", "G", "B"),
-                        help="RGB colour, each value 0.0–1.0 (default: 0.5 0.5 0.5 = gray).")
+    parser.add_argument("text", help='Watermark text, e.g. "DRAFT".')
+    parser.add_argument(
+        "--fontsize",
+        type=float,
+        default=60.0,
+        metavar="PT",
+        help="Font size in points (default: 60).",
+    )
+    parser.add_argument(
+        "--opacity",
+        type=float,
+        default=0.15,
+        metavar="N",
+        help="Opacity 0.0–1.0 (default: 0.15).",
+    )
+    parser.add_argument(
+        "--angle",
+        type=float,
+        default=45.0,
+        metavar="DEG",
+        help="Rotation in degrees, counter-clockwise (default: 45).",
+    )
+    parser.add_argument(
+        "--color",
+        nargs=3,
+        type=float,
+        default=[0.5, 0.5, 0.5],
+        metavar=("R", "G", "B"),
+        help="RGB colour, each value 0.0–1.0 (default: 0.5 0.5 0.5 = gray).",
+    )
     args = parser.parse_args()
 
     try:
         watermark_pdf(
-            args.input, args.output, args.text,
+            args.input,
+            args.output,
+            args.text,
             fontsize=args.fontsize,
             opacity=args.opacity,
             angle=args.angle,

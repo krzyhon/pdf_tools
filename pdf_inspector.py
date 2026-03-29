@@ -39,13 +39,16 @@ import fitz  # PyMuPDF
 # Shared helpers
 # ---------------------------------------------------------------------------
 
+
 def _open_page(input_path: str, page_num: int) -> tuple[fitz.Document, fitz.Page]:
     if not Path(input_path).exists():
         raise FileNotFoundError(f"Input file not found: {input_path}")
     doc = fitz.open(input_path)
     total = doc.page_count
     if page_num < 1 or page_num > total:
-        raise ValueError(f"Page {page_num} is out of range (document has {total} pages).")
+        raise ValueError(
+            f"Page {page_num} is out of range (document has {total} pages)."
+        )
     return doc, doc[page_num - 1]
 
 
@@ -53,12 +56,15 @@ def _open_page(input_path: str, page_num: int) -> tuple[fitz.Document, fitz.Page
 # Text mode
 # ---------------------------------------------------------------------------
 
+
 def inspect_text(input_path: str, page_num: int = 1, search: str | None = None) -> None:
     """Print text blocks and their bounding boxes for a given page."""
     doc, page = _open_page(input_path, page_num)
     total = doc.page_count
 
-    print(f"Page {page_num}/{total}  —  size: {page.rect.width:.0f} x {page.rect.height:.0f} pt\n")
+    print(
+        f"Page {page_num}/{total}  —  size: {page.rect.width:.0f} x {page.rect.height:.0f} pt\n"
+    )
 
     # get_text("blocks") → (x0, y0, x1, y1, text, block_no, block_type)
     blocks = page.get_text("blocks")
@@ -83,14 +89,16 @@ def inspect_text(input_path: str, page_num: int = 1, search: str | None = None) 
 
     out_stem = Path(input_path).stem
     areas_args = " ".join(f'"{a}"' for a in areas)
-    print(f"\npython pdf_redactor.py \"{input_path}\" \"{out_stem}_redacted.pdf\" --areas {areas_args}")
+    print(
+        f'\npython pdf_redactor.py "{input_path}" "{out_stem}_redacted.pdf" --areas {areas_args}'
+    )
 
 
 # ---------------------------------------------------------------------------
 # View mode
 # ---------------------------------------------------------------------------
 
-_ZOOM = 2.0          # render scale: 2× means 144 DPI — crisp on Retina
+_ZOOM = 2.0  # render scale: 2× means 144 DPI — crisp on Retina
 _RECT_COLOR = "red"
 _RECT_WIDTH = 2
 
@@ -112,11 +120,11 @@ def view_page(input_path: str, page_num: int = 1) -> None:
     page_height = page.rect.height
 
     # State shared across callbacks
-    state = {
+    state: dict[str, object] = {
         "page_num": page_num,
         "drag_start": None,
         "rect_id": None,
-        "areas": [],        # accumulated list of "PAGE:x0,y0,x1,y1" strings
+        "areas": [],  # accumulated list of "PAGE:x0,y0,x1,y1" strings
     }
 
     # --- Build UI --------------------------------------------------------
@@ -124,9 +132,19 @@ def view_page(input_path: str, page_num: int = 1) -> None:
     root.title(f"PDF Inspector — {Path(input_path).name}")
 
     # Top info bar
-    info_var = tk.StringVar(value=f"Page {page_num}/{total_pages}  |  {page_width:.0f}×{page_height:.0f} pt  |  Move mouse over page")
-    info_label = tk.Label(root, textvariable=info_var, anchor="w",
-                          font=("Menlo", 11), bg="#1e1e1e", fg="#d4d4d4", padx=8, pady=4)
+    info_var = tk.StringVar(
+        value=f"Page {page_num}/{total_pages}  |  {page_width:.0f}×{page_height:.0f} pt  |  Move mouse over page"
+    )
+    info_label = tk.Label(
+        root,
+        textvariable=info_var,
+        anchor="w",
+        font=("Menlo", 11),
+        bg="#1e1e1e",
+        fg="#d4d4d4",
+        padx=8,
+        pady=4,
+    )
     info_label.pack(fill="x")
 
     # Scrollable canvas
@@ -135,23 +153,37 @@ def view_page(input_path: str, page_num: int = 1) -> None:
 
     h_scroll = tk.Scrollbar(frame, orient="horizontal")
     v_scroll = tk.Scrollbar(frame, orient="vertical")
-    canvas = tk.Canvas(frame, bg="#404040",
-                       xscrollcommand=h_scroll.set, yscrollcommand=v_scroll.set,
-                       cursor="crosshair")
+    canvas = tk.Canvas(
+        frame,
+        bg="#404040",
+        xscrollcommand=h_scroll.set,
+        yscrollcommand=v_scroll.set,
+        cursor="crosshair",
+    )
     h_scroll.config(command=canvas.xview)
     v_scroll.config(command=canvas.yview)
     h_scroll.pack(side="bottom", fill="x")
-    v_scroll.pack(side="right",  fill="y")
+    v_scroll.pack(side="right", fill="y")
     canvas.pack(side="left", fill="both", expand=True)
 
     # Bottom output bar
-    output_var = tk.StringVar(value="Drag to select an area — the full pdf_redactor.py command will appear here")
-    output_label = tk.Label(root, textvariable=output_var, anchor="w",
-                            font=("Menlo", 11), bg="#252526", fg="#9cdcfe", padx=8, pady=4)
+    output_var = tk.StringVar(
+        value="Drag to select an area — the full pdf_redactor.py command will appear here"
+    )
+    output_label = tk.Label(
+        root,
+        textvariable=output_var,
+        anchor="w",
+        font=("Menlo", 11),
+        bg="#252526",
+        fg="#9cdcfe",
+        padx=8,
+        pady=4,
+    )
     output_label.pack(fill="x")
 
     # --- Page rendering --------------------------------------------------
-    img_ref = {}   # keep PhotoImage reference alive
+    img_ref = {}  # keep PhotoImage reference alive
 
     def load_page(pnum: int) -> None:
         nonlocal page
@@ -172,7 +204,9 @@ def view_page(input_path: str, page_num: int = 1) -> None:
         canvas.config(scrollregion=(0, 0, img_w, img_h))
         canvas.create_image(0, 0, anchor="nw", image=img, tags="page")
 
-        root.title(f"PDF Inspector — {Path(input_path).name}  [page {pnum}/{total_pages}]")
+        root.title(
+            f"PDF Inspector — {Path(input_path).name}  [page {pnum}/{total_pages}]"
+        )
         info_var.set(
             f"Page {pnum}/{total_pages}  |  {doc_page.rect.width:.0f}×{doc_page.rect.height:.0f} pt  |  "
             f"Use ← → arrow keys to navigate pages"
@@ -213,8 +247,7 @@ def view_page(input_path: str, page_num: int = 1) -> None:
         if state["rect_id"]:
             canvas.delete(state["rect_id"])
         state["rect_id"] = canvas.create_rectangle(
-            x0, y0, x1, y1,
-            outline=_RECT_COLOR, width=_RECT_WIDTH, tags="rect"
+            x0, y0, x1, y1, outline=_RECT_COLOR, width=_RECT_WIDTH, tags="rect"
         )
 
     def on_release(event):
@@ -241,9 +274,9 @@ def view_page(input_path: str, page_num: int = 1) -> None:
         output_var.set(command)
         print(command)
 
-    canvas.bind("<Motion>",         on_motion)
-    canvas.bind("<ButtonPress-1>",  on_press)
-    canvas.bind("<B1-Motion>",      on_drag)
+    canvas.bind("<Motion>", on_motion)
+    canvas.bind("<ButtonPress-1>", on_press)
+    canvas.bind("<B1-Motion>", on_drag)
     canvas.bind("<ButtonRelease-1>", on_release)
 
     # --- Keyboard navigation ---------------------------------------------
@@ -265,6 +298,7 @@ def view_page(input_path: str, page_num: int = 1) -> None:
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Inspect a PDF to find rectangle coordinates for redaction.",
@@ -282,13 +316,21 @@ def main() -> None:
     # text subcommand
     t = sub.add_parser("text", help="List text blocks with bounding box coordinates.")
     t.add_argument("input", help="Source PDF file.")
-    t.add_argument("--page", type=int, default=1, metavar="N", help="Page number (default: 1).")
-    t.add_argument("--search", metavar="TERM", help="Filter blocks containing this text.")
+    t.add_argument(
+        "--page", type=int, default=1, metavar="N", help="Page number (default: 1)."
+    )
+    t.add_argument(
+        "--search", metavar="TERM", help="Filter blocks containing this text."
+    )
 
     # view subcommand
-    v = sub.add_parser("view", help="Interactive viewer — drag to get rectangle coordinates.")
+    v = sub.add_parser(
+        "view", help="Interactive viewer — drag to get rectangle coordinates."
+    )
     v.add_argument("input", help="Source PDF file.")
-    v.add_argument("--page", type=int, default=1, metavar="N", help="Starting page (default: 1).")
+    v.add_argument(
+        "--page", type=int, default=1, metavar="N", help="Starting page (default: 1)."
+    )
 
     args = parser.parse_args()
 

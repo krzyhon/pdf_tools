@@ -23,6 +23,7 @@ def test_page_count_correct(simple_pdf, multipage_pdf, out):
 def test_three_files(simple_pdf, multipage_pdf, out, tmp_path):
     extra = str(tmp_path / "extra.pdf")
     import fitz
+
     doc = fitz.open()
     doc.new_page()
     doc.save(extra)

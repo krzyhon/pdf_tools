@@ -16,7 +16,16 @@ from pathlib import Path
 import fitz  # PyMuPDF
 from tqdm import tqdm
 
-SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".gif", ".webp"}
+SUPPORTED_EXTENSIONS = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".bmp",
+    ".tiff",
+    ".tif",
+    ".gif",
+    ".webp",
+}
 
 
 def images_to_pdf(
@@ -54,7 +63,11 @@ def images_to_pdf(
             )
 
     doc = fitz.open()
-    iterable = tqdm(image_paths, desc="Building PDF", unit="image") if show_progress else image_paths
+    iterable = (
+        tqdm(image_paths, desc="Building PDF", unit="image")
+        if show_progress
+        else image_paths
+    )
 
     for path in iterable:
         img_doc = fitz.open(path)
@@ -76,13 +89,16 @@ def main() -> None:
         usage="%(prog)s output.pdf image1.png image2.jpg [image3.png ...]",
     )
     parser.add_argument("output", help="Path for the output PDF.")
-    parser.add_argument("images", nargs="+", metavar="image",
-                        help="Image files to include, in order.")
+    parser.add_argument(
+        "images", nargs="+", metavar="image", help="Image files to include, in order."
+    )
     args = parser.parse_args()
 
     try:
         pages = images_to_pdf(args.images, args.output, show_progress=True)
-        print(f"Created '{args.output}' with {pages} page(s) from {len(args.images)} image(s).")
+        print(
+            f"Created '{args.output}' with {pages} page(s) from {len(args.images)} image(s)."
+        )
     except (FileNotFoundError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

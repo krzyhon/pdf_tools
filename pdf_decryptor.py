@@ -60,7 +60,7 @@ def main() -> None:
         description="Remove password protection from a PDF.",
         usage="%(prog)s input.pdf output.pdf [--password PASSWORD]",
     )
-    parser.add_argument("input",  help="Encrypted source PDF file.")
+    parser.add_argument("input", help="Encrypted source PDF file.")
     parser.add_argument("output", help="Path for the decrypted output PDF.")
     parser.add_argument(
         "--password",

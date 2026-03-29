@@ -77,7 +77,7 @@ def redact_areas(
     total_pages = doc.page_count
 
     # Validate page numbers up front
-    for page_num, *_ in (areas or []):
+    for page_num, *_ in areas or []:
         if page_num < 1 or page_num > total_pages:
             raise ValueError(
                 f"Page {page_num} is out of range (document has {total_pages} pages)."
@@ -90,14 +90,14 @@ def redact_areas(
         page_1based = page.number + 1
 
         # Area-based redactions on this page
-        for p, x0, y0, x1, y1 in (areas or []):
+        for p, x0, y0, x1, y1 in areas or []:
             if p == page_1based:
                 rect = fitz.Rect(x0, y0, x1, y1)
                 page.add_redact_annot(rect, fill=_FILL)
                 redaction_count += 1
 
         # Text-search redactions on this page
-        for term in (terms or []):
+        for term in terms or []:
             for rect in page.search_for(term):
                 page.add_redact_annot(rect, fill=_FILL)
                 redaction_count += 1
@@ -134,8 +134,9 @@ def redact_text(
     """
     if not terms:
         raise ValueError("Provide at least one search term.")
-    return redact_areas(input_path, output_path, areas=[], terms=terms,
-                        show_progress=show_progress)
+    return redact_areas(
+        input_path, output_path, areas=[], terms=terms, show_progress=show_progress
+    )
 
 
 def _parse_area(value: str) -> tuple[int, float, float, float, float]:
@@ -185,7 +186,8 @@ def main() -> None:
 
     try:
         count = redact_areas(
-            args.input, args.output,
+            args.input,
+            args.output,
             areas=args.areas,
             terms=args.text,
             show_progress=True,

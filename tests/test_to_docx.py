@@ -65,4 +65,6 @@ def test_invalid_end_page_raises(simple_pdf, tmp_path):
 
 def test_start_greater_than_end_raises(multipage_pdf, tmp_path):
     with pytest.raises(ValueError, match="must be <="):
-        convert_pdf_to_docx(multipage_pdf, str(tmp_path / "out.docx"), start_page=3, end_page=1)
+        convert_pdf_to_docx(
+            multipage_pdf, str(tmp_path / "out.docx"), start_page=3, end_page=1
+        )
