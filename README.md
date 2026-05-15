@@ -1,5 +1,21 @@
 # PDF Tools
 
+A collection of Python PDF utilities available both as **CLI scripts** and as a **public web application** at [pdftools.flairops.cloud](https://pdftools.flairops.cloud).
+
+## Web Application
+
+The web app exposes all tools through a browser UI backed by a FastAPI service running on AWS ECS Fargate.
+
+| Document | Description |
+|---|---|
+| [docs/architecture.md](docs/architecture.md) | System architecture, AWS components, traffic flow |
+| [docs/deployment.md](docs/deployment.md) | First-time setup, Terraform, CI/CD, GitHub secrets |
+| [docs/api.md](docs/api.md) | REST API endpoint reference |
+
+---
+
+## CLI Tools
+
 A collection of command-line Python utilities for common PDF operations.
 
 ## Requirements

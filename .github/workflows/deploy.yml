@@ -1,0 +1,100 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# OIDC requires id-token: write so GitHub can issue a short-lived token
+# that the AWS role trusts instead of storing long-lived credentials.
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-west-1
+  ECS_CLUSTER: pdf-tools
+  ECS_SERVICE: pdf-tools
+  ECR_REPO: pdf-tools
+
+jobs:
+  # ── Backend: build Docker image → push to ECR → roll out ECS ─────────────
+  deploy-backend:
+    name: Docker → ECR → ECS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure AWS credentials (OIDC — no long-lived keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & push image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          SHA_TAG: ${{ github.sha }}
+        run: |
+          IMAGE=$REGISTRY/$ECR_REPO
+
+          # Pull :latest to use as a build cache layer (fails silently on first run)
+          docker pull $IMAGE:latest || true
+
+          docker build \
+            --cache-from $IMAGE:latest \
+            --tag $IMAGE:$SHA_TAG \
+            --tag $IMAGE:latest \
+            .
+
+          docker push $IMAGE:$SHA_TAG
+          docker push $IMAGE:latest
+
+      - name: Force new ECS deployment
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment \
+            --region $AWS_REGION \
+            --output none
+
+      - name: Wait for ECS to stabilise
+        # Polls every 15 s, times out after 10 min.
+        # The job fails here if the new tasks fail their health checks.
+        run: |
+          aws ecs wait services-stable \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --region $AWS_REGION
+
+  # ── Frontend: sync static files → invalidate CloudFront cache ────────────
+  deploy-frontend:
+    name: S3 sync → CloudFront invalidation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync frontend to S3
+        run: |
+          aws s3 sync frontend/ s3://${{ secrets.FRONTEND_BUCKET }} \
+            --delete \
+            --cache-control "max-age=3600, must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ID }} \
+            --paths "/*" \
+            --output none

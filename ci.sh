@@ -25,10 +25,15 @@ echo "=== Local CI ==="
 echo
 
 run "ruff lint"          ruff check .
+echo "=================================================="
 run "ruff format"        ruff format --check .
+echo "=================================================="
 run "mypy"               mypy pdf_*.py --ignore-missing-imports
+echo "=================================================="
 run "pip-audit"          pip-audit -r requirements.txt
+echo "=================================================="
 run "pytest"             pytest tests/ -v --cov=. --cov-fail-under=80 --cov-report=term-missing
+echo "=================================================="
 
 echo
 echo "=== Results: $PASS passed, $FAIL failed ==="

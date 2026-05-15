@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Tests
+tests/
+.coveragerc
+pytest.ini
+
+# Terraform
+terraform/
+
+# Dev tooling
+.github/
+.pre-commit-config.yaml
+static-analysis.datadog.yml
+requirements-dev.txt*
+ci.sh*
+
+# GUI
+pdf_gui.py
+
+# Local sample files
+*.pdf
+*.docx
+*.png
+output_dir/
+_work/

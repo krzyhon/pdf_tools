@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Tools</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⬛</span>
+        <span class="logo-text">PDF Tools</span>
+      </div>
+      <p class="tagline">Fast, private PDF utilities — files processed in the cloud and deleted within 24 hours</p>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <!-- Modal -->
+  <div id="overlay" class="hidden" role="dialog" aria-modal="true">
+    <div id="modal">
+      <button id="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-icon" class="modal-icon"></div>
+      <h2 id="modal-title"></h2>
+      <p id="modal-desc" class="modal-desc"></p>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
